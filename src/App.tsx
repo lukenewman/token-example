@@ -1,8 +1,18 @@
+import { useAccount, useConnect } from '@puzzlehq/sdk';
+import Dashboard from './Dashboard';
+
 function App() {
+  const { isConnected, loading } = useAccount();
+  const { connect } = useConnect();
+
   return (
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
+    <div className='w-full h-full flex justify-center items-center'>
+      {loading && <>loading...</>}
+      {!loading && isConnected && <Dashboard />}
+      {!loading && !isConnected && 
+        <button onClick={connect}>Connect your wallet</button>
+      }
+    </div>
   );
 };
 
