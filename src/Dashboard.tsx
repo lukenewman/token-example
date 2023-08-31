@@ -1,5 +1,6 @@
 import { Record, useAccount, useExecuteProgram, useRecords } from '@puzzlehq/sdk';
 import { useEffect, useState } from 'react';
+import Mint from './Mint';
 
 export const shortenAddress = (
   address: string,
@@ -55,6 +56,10 @@ function Dashboard() {
     }
   }, [records]);
 
+  useEffect(() => {
+    execute();
+  }, [record]);
+
   if (!isConnected) {
     throw new Error('dashboard shouldn\'t be showing rn');
   }
@@ -90,8 +95,6 @@ function Dashboard() {
     const recordToSpend = records[recordToSpendIndex];
     console.log(`sending ${amount} to ${recipient} with ${recordToSpend}`);
     setRecord(recordToSpend);
-    /// todo: record is not yet set on state before execute is called
-    execute();
   };
 
   return (
@@ -100,11 +103,11 @@ function Dashboard() {
       <div className='w-full flex flex-col items-center justify-center gap-10'>
         <div className='w-1/2 border rounded-lg flex flex-col p-4'>
           <div className='w-full flex justify-between'>
-            <span>Total Balance</span>
+            <span className='font-bold'>Total Balance</span>
             <span>{totalBalance.toFixed(2)}</span>
           </div>
           <div className='w-full flex justify-between'>
-            <span>Max Spendable Balance</span>
+            <span className='font-bold'>Max Spendable Balance</span>
             <span>{maxSpendable.toFixed(2)}</span>
           </div>
         </div>
@@ -139,15 +142,11 @@ function Dashboard() {
             </div>
           </div>
           <button disabled={execute_loading || !amount || !recipient} onClick={send}>send</button>
+          {transactionId && <span>{'Send Transaction ID: ' + transactionId}</span>}
         </div>
-        {/* <div className='max-h-30 overflow-y-auto w-1/2 border rounded-lg flex flex-col items-center justify-center gap-4 p-4'>
-          <span className='text-xl font-bold'>Records</span>
-          {records?.map(r => {
-            return (
-              <div key={r.id}>{r.id}</div>
-            )
-          })}
-        </div> */}
+        {account?.address === '' && (
+          <Mint />
+        )}
       </div>
     </>
   );
